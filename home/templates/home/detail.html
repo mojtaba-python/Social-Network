@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_headers %} 
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header div_title">
+            <div>
+                <a href="{% url 'accounts:user_profile' post.user.id %}" style="text-decoration: none; color: rgb(255, 255, 255);">{{ post.user.email }}</a>  
+                <span style="color: rgb(255, 255, 255);">{{ post.updated|date:"Y-M-d"}}</span>
+            </div>
+            <div>
+                <a href="{% url 'home:post_like' post.id %}" class="{% if can_like %}disabled{% endif %} btn btn-primary">Like {{ post.like_count }}</a>
+            </div>
+            
+            {% if request.user.is_authenticated and request.user.id == post.user.id %}
+            <div>
+                <a href="{% url 'home:post_delete' post.id %}" class="btn btn-danger">Delete Post</a>
+                <a href="{% url 'home:post_update' post.id %}" class="btn btn-info">Update Post</a>
+                
+            </div>
+            {% endif %}
+           
+        </div>
+        <div class="card-body"><img style="width: 330px; height: 270px;" src="{{ post.image.url }}" alt="my picture"></div>
+        <div class="card-body">{{ post.body|safe }}</div>
+    </div>
+
+    <div class="card" style="height: 390px; width: 400px; margin-top: 20px; padding: 20px; background-color: rgb(226, 226, 226);">
+        <p style="color: rgb(190, 188, 188);">Post a comment</p>
+        {% if request.user.is_authenticated %}
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Send">
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="card" style="margin-top: 20px; padding: 20px;">
+        {% for comments in  comment %}
+            <div class="card-hear" style="color: rgb(190, 188, 188);">{{ comments.user }} | {{ comments.created|timesince }}</div>
+            <div class="card-body">{{ comments.body }}</div>
+
+            <div class="card" style="background-color: rgb(226, 226, 226); height: 390px; width: 400px;  padding: 20px;">
+                <p style="color: rgb(190, 188, 188);">Reply to comment</p>
+                <form action="{% url 'home:post_reply' post.id comments.id %}" method="post">
+                    {% csrf_token %}
+                    {{ form_reply.as_p }}
+                    <input type="submit" value="Send">
+                </form>
+            </div>
+            <br>
+            <div class="card col-md-5">
+                <div style=" background-color: rgb(239, 239, 239); padding: 10px; ">
+                    {% for reply in comments.rcomment.all %}
+                        <div style="color: rgb(179, 176, 176);" class="card-hear">{{ reply.user }}</div>
+                        <div class="card-body">{{ reply.body }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            <div>
+                {% empty %}
+                <p>No Comment yet</p>
+            </div>
+            
+        {% endfor %}
+    </div>
+  
+    
+{% endblock %}

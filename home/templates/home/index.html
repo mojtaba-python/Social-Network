@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_headers %} 
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+    
+    {% for posts in post %}
+        <div class="card col-md-5 card-home" style="margin: 20px; padding: 20px; transition: all 250ms ease 70ms; ">
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: rgb(179, 176, 176);">{{ posts.user }}</span>
+            <span><i class="bi bi-hand-thumbs-up"></i>
+             {{ posts.like_count }}
+            </span>
+              
+        </div>
+        <a href="{{ posts.get_absolute_url }}" class="card-body" style="text-decoration: none;">{{ posts.body|truncatewords:8|safe }}</a>
+        </div>
+    {% endfor %}
+    
+    
+{% endblock %}
+

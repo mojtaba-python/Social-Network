@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <form action="" method="post" novalidate class="col-md-3">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Login">
+        </form>
+    </div>
+    <br>
+    <div>
+        <a style="text-decoration: none;" href="{% url 'accounts:reset_password' %}">Forget your Password?</a>
+    </div>
+
+{% endblock %}
